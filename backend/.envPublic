@@ -1,0 +1,6 @@
+MongoDBUrl= ''
+PrivateKeyJWT= ''
+ClientIDGithub = ''
+ClientSecretGithub = ''
+ShippingEmail = ''
+ShippingPass = ''
