@@ -14,8 +14,10 @@ export const getTicketByCodeController = async (req, res, next) =>{
     try {
         const { code } = req.params;
         const ticket = await ticketDao.getTicketByCode(code)
-        if(!ticket) return httpResponse.NotFound(res, ticket)
-            else return httpResponse.Ok(res, ticket)
+        if(!ticket) {
+            logger.error(`ticket with ${code} code not found`)
+            return httpResponse.NotFound(res, ticket)
+        } else return httpResponse.Ok(res, ticket)
     } catch (error) {
         logger.error(error)
         next(error);
@@ -25,8 +27,10 @@ export const getTicketByIdController = async (req, res, next) =>{
     try {
         const { id } = req.params;
         const ticket = await ticketDao.getTicketById(id)
-        if(!ticket) return httpResponse.NotFound(res, ticket)
-            else return httpResponse.Ok(res, ticket)
+        if(!ticket) {
+            logger.error(`ticket with ${id} id not found`)
+            return httpResponse.NotFound(res, ticket)
+        } else return httpResponse.Ok(res, ticket)
     } catch (error) {
         logger.error(error)
         next(error);

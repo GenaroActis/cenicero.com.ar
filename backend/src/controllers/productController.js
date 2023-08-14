@@ -36,8 +36,10 @@ export const getProductByIdController = async (req, res, next) =>{
     try {
         const {id} = req.params;
         const productSearched = await prodDao.getProductById(id);
-        if(!productSearched) return httpResponse.NotFound(res, productSearched)
-        else return httpResponse.Ok(res, productSearched)
+        if(!productSearched) {
+            logger.error(`product with id ${id} not found`)
+            return httpResponse.NotFound(res, productSearched)
+        } else return httpResponse.Ok(res, productSearched)
     } catch (error) {
         logger.error(error)
         next(error)
@@ -46,7 +48,7 @@ export const getProductByIdController = async (req, res, next) =>{
 
 export const createProductController = async (req, res, next) =>{
     try {
-        const { title, description, price, stock, code, category, size } = req.body
+        const { title, description, price, stock, category, size } = req.body
         const addedProduct = await prodDao.createProduct({
             title,
             description,
@@ -56,9 +58,11 @@ export const createProductController = async (req, res, next) =>{
             category,
             size
         })
-        if(!addedProduct) return httpResponse.BadRequest(res, 'One of the fields is not correct')
-        else return httpResponse.Ok(res, addedProduct)
-    } catch (error) {
+        if(!addedProduct) {
+            logger.warning('Incorrect data entered for new product')
+            return httpResponse.BadRequest(res, 'One of the fields is not correct')
+        } else return httpResponse.Ok(res, addedProduct)
+    } catch (error) {   
         logger.error(error)
         next(error)
     };
@@ -81,6 +85,7 @@ export const updateProductController = async (req, res, next) =>{
         const {title, description, price, stock, code, category, size} = req.body;
         const existingValidator = await prodDao.getProductById(id);
         if (!existingValidator) {
+            logger.error(`product with id ${id} not found`)
             return httpResponse.NotFound(res, 'Product not found!')
         } else{
             const prodUpdated = await prodDao.updateProduct(
@@ -100,8 +105,9 @@ export const getProductBySomethingController = async (req, res, next) =>{
         const {key} = req.params;
         const {value} = req.params;
         const productSearched = await prodDao.getProductBySomething(key, value)
-        if(!productSearched) return httpResponse.NotFound(res, 'Product not found!')
-        else return httpResponse.Ok(res, productSearched)
+        if(!productSearched) {
+            return httpResponse.NotFound(res, 'Product not found!')
+        } else return httpResponse.Ok(res, productSearched)
     } catch (error) {
         logger.error(error)
         next(error)
