@@ -1,0 +1,3 @@
+{"level":"debug","message":"Debug message"}
+{"level":"http","message":"HTTP message"}
+{"level":"info","message":"Info message"}
