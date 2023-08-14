@@ -4,6 +4,7 @@ import ProductsDaoMongoDB from "../persistence/daos/mongodb/productsDao.js";
 import { generateCodeTicket } from "../utils/utils.js"
 import buyerUserDto from "../persistence/dtos/buyerUserDto.js"
 import { HttpResponse } from "../utils/httpResponse.js";
+import logger from "../utils/logger.js";
 const ticketDao = new TicketDaoMongoDB();
 const cartDao = new CartsDaoMongoDB();
 const prodDao = new ProductsDaoMongoDB();
@@ -16,6 +17,7 @@ export const getTicketByCodeController = async (req, res, next) =>{
         if(!ticket) return httpResponse.NotFound(res, ticket)
             else return httpResponse.Ok(res, ticket)
     } catch (error) {
+        logger.error(error)
         next(error);
     };
 };   
@@ -26,6 +28,7 @@ export const getTicketByIdController = async (req, res, next) =>{
         if(!ticket) return httpResponse.NotFound(res, ticket)
             else return httpResponse.Ok(res, ticket)
     } catch (error) {
+        logger.error(error)
         next(error);
     };
 };
@@ -64,6 +67,7 @@ export const generateTicketController = async (req, res, next) =>{
             return httpResponse.Ok(res, ticket)
         }
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -84,6 +88,7 @@ export const finalizePurchaseController = async (req, res, next)=>{
             return httpResponse.Ok(res, savePurchase)
         };
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };

@@ -1,6 +1,7 @@
 import ProductsDaoMongoDB from "../persistence/daos/mongodb/productsDao.js";
 import { generateCodeTicket } from "../utils/utils.js"
 import { HttpResponse } from "../utils/httpResponse.js";
+import logger from "../utils/logger.js";
 const prodDao = new ProductsDaoMongoDB();
 const httpResponse = new HttpResponse();
 
@@ -26,6 +27,7 @@ export const getAllProductsController = async (req, res, next) =>{
         };
         return httpResponse.Ok(res, productsFile);
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -37,6 +39,7 @@ export const getProductByIdController = async (req, res, next) =>{
         if(!productSearched) return httpResponse.NotFound(res, productSearched)
         else return httpResponse.Ok(res, productSearched)
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -56,6 +59,7 @@ export const createProductController = async (req, res, next) =>{
         if(!addedProduct) return httpResponse.BadRequest(res, 'One of the fields is not correct')
         else return httpResponse.Ok(res, addedProduct)
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -66,6 +70,7 @@ export const deleteProductController = async (req, res, next) =>{
         const prodDeleted = await prodDao.deleteProduct(id)
         return httpResponse.Ok(res, prodDeleted);
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -85,6 +90,7 @@ export const updateProductController = async (req, res, next) =>{
             return httpResponse.Ok(res, prodUpdated);
         };
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -97,6 +103,7 @@ export const getProductBySomethingController = async (req, res, next) =>{
         if(!productSearched) return httpResponse.NotFound(res, 'Product not found!')
         else return httpResponse.Ok(res, productSearched)
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -123,6 +130,7 @@ export const getMockingProdsController = async (req, res, next) =>{
         };
         return httpResponse.Ok(res, productsFile);
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -133,6 +141,7 @@ export const createMockingProdsController = async (req, res, next) =>{
         const response = await prodDao.createMockingProduct(quantity)
         return httpResponse.Ok(res, response)
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };

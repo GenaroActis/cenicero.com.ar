@@ -2,7 +2,7 @@ import UsersDaoMongoDB from '../persistence/daos/mongodb/usersDao.js'
 import CartsDaoMongoDB from "../persistence/daos/mongodb/cartsDao.js";
 import { HttpResponse } from "../utils/httpResponse.js";
 import { generateToken } from '../jwt/auth.js';
-
+import logger from "../utils/logger.js";
 const cartDao = new CartsDaoMongoDB();
 const userDao = new UsersDaoMongoDB(); 
 const httpResponse = new HttpResponse();
@@ -21,6 +21,7 @@ export const register = async(req, res, next)=>{
             return httpResponse.Ok(res, token);
         };
     } catch (error) {
+        logger.error(error)
         next(error);
     };
 };
@@ -41,6 +42,7 @@ export const login = async(req, res, next)=>{
             }
         }
     } catch (error) {
+        logger.error(error)
         next(error);
     };
 };
@@ -55,6 +57,7 @@ export const logoutUserController = async (req, res, next) =>{
             };
         });
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -69,6 +72,7 @@ export const renderProfile = async(req, res, next) =>{
             return httpResponse.Ok(res, userData);
         };
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };
@@ -79,6 +83,7 @@ export const ensureIsAdminController = async (req, res, next) =>{
         return httpResponse.Ok(res, 'Authorized user')
         else return httpResponse.Unauthorized(res, 'Unauthorized user')
     } catch (error) {
+        logger.error(error)
         next(error)
     };
 };

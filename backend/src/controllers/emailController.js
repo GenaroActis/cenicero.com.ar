@@ -2,11 +2,11 @@ import { createTransport,  } from 'nodemailer';
 import { ShippingEmail, ShippingPass } from '../config.js'
 import TicketDaoMongoDB from '../persistence/daos/mongodb/ticketDao.js'
 import { HttpResponse } from "../utils/httpResponse.js";
-
+import logger from "../utils/logger.js";
 const httpResponse = new HttpResponse();
 const ticketDao = new TicketDaoMongoDB();
 
-export const sendConfirmationEmailController = async (req, res) =>{
+export const sendConfirmationEmailController = async (req, res, next) =>{
     try {
         const { ticketCode } = req.params
         const ticket = await ticketDao.getTicketByCode(ticketCode)
@@ -37,7 +37,7 @@ export const sendConfirmationEmailController = async (req, res) =>{
         if(!response) httpResponse.ServerError(res, response)
         else httpResponse.Ok(res, response)
     } catch (error) {
-        console.log(error)
-        throw new Error(error)
+        logger.error(error)
+        next(error)
     }
 };
