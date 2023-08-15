@@ -1,21 +1,27 @@
 import {CartsModel} from './models/cartsModel.js';
-
+import logger from '../../../utils/logger.js'
 export default class CartsDaoMongoDB {
     async createCart() {
         try {
         const response = await CartsModel.create({});
-        if (!response) return false
-        else return response;
+        if (!response) {
+            logger.error('error in the dao of the cart, function create cart')
+            return false
+        } else return response;
         } catch (error) {
+        logger.error(error)
         throw new Error(error);
         };
     };
     async getCart(id) {
         try {
             const response = await CartsModel.findOne({ _id: id }).populate('products._id')
-            if (!response) return false
-            else return response;
+            if (!response) {
+                logger.error('cart dao error, get cart function')
+                return false
+            } else return response;
         } catch (error) {
+            logger.error(error)
             throw new Error(error);
         };
     };
@@ -39,6 +45,7 @@ export default class CartsDaoMongoDB {
             const cartUpdate = await CartsModel.findById(cartId);
             return cartUpdate
         } catch (error) {
+            logger.error(error)
             throw new Error(error);
         };
     };
@@ -64,6 +71,7 @@ export default class CartsDaoMongoDB {
             const cartUpdate = await CartsModel.findById(cartId).populate('products._id');
             return cartUpdate;
         } catch (error) {
+            logger.error(error)
             throw new Error(error);
         };
     };
@@ -79,6 +87,7 @@ export default class CartsDaoMongoDB {
                 return emptyCart
             };
         } catch (error) {
+            logger.error(error)
             throw new Error(error);
         };
     };
@@ -104,6 +113,7 @@ export default class CartsDaoMongoDB {
             const cartUpdate = await CartsModel.findById(cartId).populate('products._id');
             return cartUpdate;
         } catch (error) {
+            logger.error(error)
             throw new Error(error);
         };
     };
@@ -118,6 +128,7 @@ export default class CartsDaoMongoDB {
                 return updatedCart;
             }
         } catch (error) {
+            logger.error(error)
             throw new Error(error);
         }
     }

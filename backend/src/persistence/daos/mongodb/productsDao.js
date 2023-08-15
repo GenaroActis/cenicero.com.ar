@@ -1,6 +1,7 @@
 import { ProductsModel } from './models/productsModels.js';
 import { MockingProdsModel } from './models/mockingProdsModel.js'
 import { generateProducts } from '../../../utils/utils.js'
+import logger from '../../../utils/logger.js'
 export default class ProductsDaoMongoDB {
     async getAllProducts(page = 1, limit = 5, key, value, sortField = 'price', sortOrder = 'desc') {
         try {
@@ -15,6 +16,7 @@ export default class ProductsDaoMongoDB {
         const response = await ProductsModel.paginate(query, options);
         return response;
         } catch (error) {
+        logger.error(error)
         throw new Error(error);
         };
     };
@@ -23,6 +25,7 @@ export default class ProductsDaoMongoDB {
         const response = await ProductsModel.findById(id);
         return response;
         } catch (error) {
+        logger.error(error)
         throw new Error(error)
         };
     };
@@ -31,6 +34,7 @@ export default class ProductsDaoMongoDB {
         const response = await ProductsModel.create(obj);
         return response;
         } catch (error) {
+        logger.error(error)
         throw new Error(error);
         };
     };
@@ -39,6 +43,7 @@ export default class ProductsDaoMongoDB {
         await ProductsModel.updateOne({_id: id}, obj);
         return obj;
         } catch (error) {
+        logger.error(error)
         throw new Error(error);
         };
     };
@@ -47,6 +52,7 @@ export default class ProductsDaoMongoDB {
         const response = await ProductsModel.findByIdAndDelete(id);
         return response;
         } catch (error) {
+        logger.error(error)
         throw new Error(error);
         };
     };
@@ -57,6 +63,7 @@ export default class ProductsDaoMongoDB {
             const response = await ProductsModel.find(query)
             return response
         } catch (error) {
+            logger.error(error)
             throw new Error(error);
         };
     };
@@ -65,6 +72,7 @@ export default class ProductsDaoMongoDB {
             const prodUpdate = await ProductsModel.updateOne({ _id: id }, {$set: { stock: remainingStock} })
             return prodUpdate
         } catch (error) {
+            logger.error(error)
             throw new Error(error);
         };
     };
@@ -78,6 +86,7 @@ export default class ProductsDaoMongoDB {
         const response = await MockingProdsModel.create(productsArray);
         return response;
         } catch (error) {
+        logger.error(error)
         throw new Error(error);
         };
     };
@@ -94,6 +103,7 @@ export default class ProductsDaoMongoDB {
             const response = await MockingProdsModel.paginate(query, options);
             return response;
         } catch (error) {
+        logger.error(error)
         throw new Error(error);
         };
     };

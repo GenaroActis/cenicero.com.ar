@@ -1,6 +1,6 @@
 import {UserModel} from './models/usersModel.js'
 import { createHash, isValidPassword } from '../../../utils/utils.js';
-
+import logger from '../../../utils/logger.js'
 export default class UsersDaoMongoDB {
     async getUserByEmail(email){
         try {
@@ -11,6 +11,7 @@ export default class UsersDaoMongoDB {
                 return response
             };
         } catch (error) {
+            logger.error(error)
             throw new Error(error)
         };
     };
@@ -23,6 +24,7 @@ export default class UsersDaoMongoDB {
                 return response
             };
         } catch (error) {
+            logger.error(error)
             throw new Error(error)
         };
     };
@@ -38,6 +40,7 @@ export default class UsersDaoMongoDB {
                 return newUser
             };
         } catch (error) {
+            logger.error(error)
             throw new Error(error)
         };
     };
@@ -58,6 +61,7 @@ export default class UsersDaoMongoDB {
                 return false
             };
         } catch (error) {
+            logger.error(error)
             throw new Error(error)
         }
     };
