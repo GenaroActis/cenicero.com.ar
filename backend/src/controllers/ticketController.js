@@ -82,8 +82,10 @@ export const finalizePurchaseController = async (req, res, next)=>{
         const remainingProducts = confirmedTicket.remainingProducts
         cartDao.updateCartProducts(cartId, remainingProducts)
         const savePurchase = await ticketDao.createTicket(confirmedTicket)
-        if(!savePurchase) return httpResponse.ServerError(res, savePurchase)
-        else{
+        if(!savePurchase) { 
+            logger.error(savePurchase)
+            return httpResponse.ServerError(res, savePurchase)
+        } else{
             confirmedTicket.products.forEach(async (prod) => {
                 const { quantity, _id } = prod;
                 const remainingStock = _id.stock - quantity

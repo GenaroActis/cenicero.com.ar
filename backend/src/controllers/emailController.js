@@ -34,10 +34,12 @@ export const sendConfirmationEmailController = async (req, res, next) =>{
             `
         }
         const response = await transporter.sendMail(gmailOptions)
-        if(!response) httpResponse.ServerError(res, response)
-        else httpResponse.Ok(res, response)
+        if(!response) {
+            logger.warning('error sent email')
+            httpResponse.ServerError(res, response)
+        } else httpResponse.Ok(res, response)
     } catch (error) {
         logger.error(error)
         next(error)
-    }
+    };
 };

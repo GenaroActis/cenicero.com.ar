@@ -5,7 +5,7 @@ export default class CartsDaoMongoDB {
         try {
         const response = await CartsModel.create({});
         if (!response) {
-            logger.error('error in the dao of the cart, function create cart')
+            logger.error('error in the dao of the cart, function createCart')
             return false
         } else return response;
         } catch (error) {
@@ -17,7 +17,7 @@ export default class CartsDaoMongoDB {
         try {
             const response = await CartsModel.findOne({ _id: id }).populate('products._id')
             if (!response) {
-                logger.error('cart dao error, get cart function')
+                logger.error('Error cart dao, getCart function')
                 return false
             } else return response;
         } catch (error) {
@@ -28,8 +28,10 @@ export default class CartsDaoMongoDB {
     async addProductToCart(prodId, cartId){
         try {
             const cartFind = await CartsModel.findById(cartId)
-            if(!cartFind) return false
-            const existingProduct = cartFind.products.find(productIt => productIt._id.toString() === prodId);
+            if(!cartFind) {
+                logger.error('Error cart dao, addProductToCart function')
+                return false
+            } const existingProduct = cartFind.products.find(productIt => productIt._id.toString() === prodId);
             if(existingProduct){
                 const updatedQuantity = existingProduct.quantity + 1
                 await CartsModel.updateOne(
