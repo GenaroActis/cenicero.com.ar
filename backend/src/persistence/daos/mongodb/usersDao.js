@@ -65,4 +65,22 @@ export default class UsersDaoMongoDB {
             throw new Error(error)
         }
     };
+    async recoverPassword (userData) {
+        try {
+            const email = userData.email
+            const password = userData.newPassword
+            const userSearch = await UserModel.findOne({email}); 
+            const passwordValidate = isValidPassword(password, userSearch)
+            if(passwordValidate) {
+                return 'thePasswordsAreTheSame'
+            } else {
+                const newPassword = createHash(password);
+                await UserModel.findByIdAndUpdate(userSearch._id, { password: newPassword });
+                return 'passwordUpdated';
+            }
+        } catch (error) {
+            logger.error(error)
+            throw new Error(error)
+        }
+    };
 };

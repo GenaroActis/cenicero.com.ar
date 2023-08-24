@@ -4,10 +4,10 @@ import { AdminContext } from '../../context/AdminContext'
 import Spinner from 'react-bootstrap/Spinner';
 
 const AdminMenu = () => {
-    const { ensureIsAdmin } = useContext(AdminContext)
+    const { ensureIsAdmOrPrem } = useContext(AdminContext)
     const [loading, setLoading] = useState(true);
     const verifyAdmin = async() =>{
-        const ensureFunct = await ensureIsAdmin()
+        const ensureFunct = await ensureIsAdmOrPrem()
         if(ensureFunct) setLoading(false)
     };
     

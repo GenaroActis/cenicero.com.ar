@@ -1,10 +1,15 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import {UserContext} from '../../context/UserContext';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 import { Link } from 'react-router-dom'
 
 const Login = () => {
-    const { login, registerGithub  } = useContext(UserContext)
-    const handleSubmit = (event) => {
+    const { login, registerGithub, sendRecoverPassEmail  } = useContext(UserContext)
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const handleSubmitLogin = (event) => {
         event.preventDefault();
         const email = document.querySelector('#email').value
         const password = document.querySelector('#password').value
@@ -13,6 +18,12 @@ const Login = () => {
     const handleSubmitGithub = (event) => {
         event.preventDefault();
         registerGithub()
+    };
+    const handleSubmitRecoverPass = async (event) => {
+        event.preventDefault();
+        const email = document.querySelector('#recoverEmail').value
+        const res = await sendRecoverPassEmail(email)
+        if(res) handleClose()
     };
     return (
     <>  
@@ -31,7 +42,7 @@ const Login = () => {
                     <div className="card userCard shadow-2-strong card-registration">
                         <div className="card-body p-4 p-md-5">
                         <h3 className="mb-4 pb-2 pb-md-0 mb-md-5">Login Form</h3>
-                            <form id="formLogin" onSubmit={handleSubmit}>
+                            <form id="formLogin" onSubmit={handleSubmitLogin}>
                                 <div className="row">
                                     <div className="col-md-6 mb-4 d-flex align-items-center">
                                         <div className="form-outline datepicker w-100">
@@ -46,10 +57,30 @@ const Login = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="d-flex justify-content-center mt-4 pt-2">
+                                <div className="d-flex justify-content-center p-4">
                                     <input className="btn btn-primary btn-lg" type="submit" value="Submit" />
                                 </div>
                             </form>
+                            <Button variant="primary" onClick={handleShow}>
+                            Forgot my password
+                            </Button>
+                            <Modal show={show} onHide={handleClose}>
+                                <Modal.Header closeButton>
+                                <Modal.Title>Enter your email</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <input required placeholder='Email' type="email" name="recoverEmail" id="recoverEmail" className="form-control form-control-lg" />
+                                    <label className="form-label" htmlFor="recoverEmail">Email</label>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose}>
+                                    Close
+                                </Button>
+                                <Button variant="primary" onClick={handleSubmitRecoverPass}>
+                                    Send recovery email
+                                </Button>
+                                </Modal.Footer>
+                            </Modal>
                         </div>
                     </div>
                 </div>

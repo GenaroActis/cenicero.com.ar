@@ -47,6 +47,18 @@ export const login = async(req, res, next)=>{
     };
 };
 
+export const recoverPasswordController = async(req, res, next)=>{
+    try {
+        const { email, newPassword } = req.body;
+        const recoverPass = await userDao.recoverPassword({email, newPassword});
+        if(recoverPass === 'thePasswordsAreTheSame') return httpResponse.Conflict(res, 'thePasswordsAreTheSame')
+        if(recoverPass === 'passwordUpdated') return httpResponse.Ok(res, 'passwordUpdated')
+    } catch (error) {
+        logger.error(error)
+        next(error);
+    };
+};
+
 export const logoutUserController = async (req, res, next) =>{
     try {
         req.session.destroy((err) => {
@@ -82,6 +94,27 @@ export const ensureIsAdminController = async (req, res, next) =>{
         if(req.user.role === "admin") 
         return httpResponse.Ok(res, 'Authorized user')
         else return httpResponse.Unauthorized(res, 'Unauthorized user')
+    } catch (error) {
+        logger.error(error)
+        next(error)
+    };
+};
+
+export const ensureIsAdmOrPremController = async (req, res, next) =>{
+    try {
+        const userRole = req.user.role
+        if(userRole === "admin"  || userRole === "premium" ) 
+        return httpResponse.Ok(res, 'Authorized user')
+        else return httpResponse.Unauthorized(res, 'Unauthorized user')
+    } catch (error) {
+        logger.error(error)
+        next(error)
+    };
+};
+
+export const checkAuthToRecoverPassController = async (req, res, next) =>{
+    try {
+        return httpResponse.Ok(res, req.email)
     } catch (error) {
         logger.error(error)
         next(error)

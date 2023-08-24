@@ -12,6 +12,7 @@ import { MongoDBUrl } from './config.js';
 import './passport/jwt.js';
 import './passport/github.js';
 import cors from 'cors';
+import helmet from 'helmet'
 
 const app = express();
 const port = 8080;
@@ -29,13 +30,13 @@ app.use(session({
     cookie: {
         maxAge: 25000
     },
-        store : new MongoStore({
-            mongoUrl: MongoDBUrl,
-            ttl: 100,
-        })
+    store : new MongoStore({
+        mongoUrl: MongoDBUrl,
+        ttl: 100,
+    })
 })
 );
-
+app.use(helmet())
 app.use(cors({
     credentials:true,
     origin: 'http://localhost:3000'

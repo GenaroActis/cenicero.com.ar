@@ -3,7 +3,7 @@ import productsRouter from './apiRoutes/productsRouter.js';
 import cartsRouter from './apiRoutes/cartRouter.js';
 import usersRouter from './apiRoutes/userRouter.js';
 import ticketRouter from './apiRoutes/ticketRouter.js'
-import ensureAdmin from './apiRoutes/ensureAdmin.js'
+import ensureAdmin from './apiRoutes/adminRouter.js'
 import emailRouter from './apiRoutes/emailRouter.js'
 
 const router = Router()

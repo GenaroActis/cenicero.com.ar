@@ -23,6 +23,7 @@ import ProductManager from './adminPages/ProductManager'
 import SalesHistory from './adminPages/SalesHistory'
 import ProductModifier from './adminPages/ProductModifier'
 import ConfirmedPurchase from './pages/ConfirmedPurchase'
+import RecoverPassword from './pages/RecoverPassword'
 import '../scss/modal.css'
 import '../scss/detalleProductos.css'
 import  '../scss/reset.css'
@@ -38,7 +39,7 @@ const Landing = () => {
 
     return (
     <div id='landing'>
-        <React.StrictMode>
+        <>
             <UserProvider>
             <CartProvider>
             <ProductProvider>
@@ -61,6 +62,7 @@ const Landing = () => {
                             <Route exact path="/admin/salesHistory" element={<SalesHistory/>}/>
                             <Route exact path="/productModifier/:id" element={<ProductModifier/>}/>
                             <Route exact path="/confirmedPurchase/:code" element={<ConfirmedPurchase/>}/>
+                            <Route exact path="/recover" element={<RecoverPassword/>}/>
                         </Routes>
                     <Footer/>
                 </BrowserRouter>
@@ -69,7 +71,7 @@ const Landing = () => {
             </ProductProvider>
             </CartProvider>
             </UserProvider>
-        </React.StrictMode>
+        </>
     </div>
     )
 }

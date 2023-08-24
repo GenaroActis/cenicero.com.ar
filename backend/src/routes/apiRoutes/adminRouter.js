@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ensureIsAdminController } from '../../controllers/userController.js';
+import { ensureIsAdminController, ensureIsAdmOrPremController } from '../../controllers/userController.js';
 import { checkAuth } from '../../jwt/auth.js';
 import logger from '../../utils/logger.js'
 const router = Router();
@@ -13,6 +13,7 @@ router.get('/loggerTest', (req, res) => {
     logger.fatal('Fatal message');
     res.send('Check the logs');
 });
-router.get('/', checkAuth, ensureIsAdminController);
+router.get('/only', checkAuth, ensureIsAdminController);
+router.get('/', checkAuth, ensureIsAdmOrPremController);
 
 export default router

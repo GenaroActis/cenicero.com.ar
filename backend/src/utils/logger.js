@@ -30,9 +30,3 @@ const logConfig ={
 };
 const logger = winston.createLogger(logConfig)
 export default logger;
-// logger.debug('mensaje con nivel debug');
-// logger.http('mensaje con nivel http');
-// logger.info('mensaje con nivel info');
-// logger.warning('mensaje con nivel warning');
-// logger.error('mensaje con nivel error');
-// logger.fatal('mensaje con nivel fatal');

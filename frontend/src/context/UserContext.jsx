@@ -6,7 +6,7 @@ export const UserContext = createContext();
 
 const UserProvider = ({children}) =>{
 
-    const notifyRegisterError = () => toast.error('ya existe un usuario con ese email!', {
+    const generateNotifyError = (msg) => toast.error(msg, {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -18,31 +18,7 @@ const UserProvider = ({children}) =>{
         theme: "colored",
     });
 
-    const notifyLoginError = () => toast.error('Correo o contraseña equivocada!', {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: 0,
-        content : 0,
-        theme: "colored",
-    });
-
-    const notifyPasswordVeryShort= () => toast.error('la contraseña debe tener mas de 6 caracteres!', {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: 0,
-        content : 0,
-        theme: "colored",
-    });
-
-    const notifyIsGithub= () => toast.error('este email fue registrado desde github!', {
+    const generateNotifySuccess = (msg) => toast.success(msg, {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -70,10 +46,10 @@ const UserProvider = ({children}) =>{
                 const error = await response.json()
                 if(error.errors){
                     if(error.errors[0].msg === 'VeryShort'){
-                        notifyPasswordVeryShort()
+                        generateNotifyError('Password must have 6 or more characters!')
                     }
                     if(error.errors === 'EmailAlreadyRegistered'){
-                        notifyRegisterError()
+                        generateNotifyError('There is already a registered user with this email!')
                     }
                 } else{
                     throw new Error('Error en la solicitud');
@@ -101,8 +77,8 @@ const UserProvider = ({children}) =>{
                 window.location.href = 'http://localhost:3000/products'
             } else {
                 const error= await response.json()
-                if(error.errors === 'isGithub') notifyIsGithub()
-                else notifyLoginError();
+                if(error.errors === 'isGithub') generateNotifyError('This user was registered from github!')
+                else generateNotifyError('Wrong email or password!');
             };
         } catch (error) {
             console.log(error)
@@ -135,8 +111,96 @@ const UserProvider = ({children}) =>{
         };
     };
 
+    const sendRecoverPassEmail = async (userEmail) =>{
+        try {
+            const userData = {email: userEmail}
+            const response = await fetch(`http://localhost:8080/api/email/recover`, {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+            if (response.ok) {
+                const res = await response.json()
+                const token = res.validateToken;
+                localStorage.setItem('tokenRecoverPass', token);
+                generateNotifySuccess('Email sent correctly check your inbox!')
+                return response
+            } else {
+                const error= await response.json()
+                if(error.errors === 'isGithub') generateNotifyError('This user was registered from github!')
+                if(error.errors === 'theMailIsNotRegistered') generateNotifyError('No user was found with this email');
+            };
+        } catch (error) {
+            console.log(error)
+        };
+    };
+
+    const validateTokenToRecover = async () =>{
+        try {
+            const tokenRecover = localStorage.getItem('tokenRecoverPass');
+            const response = await fetch(`http://localhost:8080/api/user/recover`, {
+                method: 'GET',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + tokenRecover,
+                },
+            });
+            if (response.ok) {
+                const res = await response.json();
+                return res
+            } else {
+                generateNotifyError('The time has passed to recover your password, try again!')
+                setTimeout( ()=>{window.location.href = `http://localhost:3000/`}, 2000)
+            }
+        } catch (error) {
+            console.log(error)
+        };
+    };
+
+    const changePassword = async (email, newPassword, repeatPassword) =>{
+        try {
+            if(newPassword === repeatPassword) {
+                const userData = {
+                    email: email,
+                    newPassword: newPassword
+                }
+                const response = await fetch(`http://localhost:8080/api/user/recover`, {
+                    method: 'PUT',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+                if (response.ok) {
+                    await response.json();
+                    localStorage.removeItem('tokenRecoverPass');
+                    window.location.href = 'http://localhost:3000/'
+                } else {
+                    const error = await response.json()
+                    if(error.errors){
+                        if(error.errors[0].msg === 'VeryShort'){
+                            generateNotifyError('Password must have 6 or more characters!')
+                        }
+                        if(error.errors === 'thePasswordsAreTheSame'){
+                            generateNotifyError('This is the current password!')
+                        }
+                    } else{
+                        throw new Error('Error en la solicitud');
+                    }
+                }
+            } else{
+                generateNotifyError('Passwords have to be the same')
+                return false
+            }
+        } catch (error) {
+            console.log(error)
+        };
+    };
+
     return(
-        <UserContext.Provider value={{ register, login, registerGithub, logout}}>
+        <UserContext.Provider value={{ changePassword, validateTokenToRecover, sendRecoverPassEmail, register, login, registerGithub, logout}}>
         {children}
         </UserContext.Provider>
     )

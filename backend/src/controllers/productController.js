@@ -48,6 +48,7 @@ export const getProductByIdController = async (req, res, next) =>{
 
 export const createProductController = async (req, res, next) =>{
     try {
+        const ownerEmail = req.user.email
         const { title, description, price, stock, category, size } = req.body
         const addedProduct = await prodDao.createProduct({
             title,
@@ -56,7 +57,8 @@ export const createProductController = async (req, res, next) =>{
             stock,
             code: generateCodeTicket(),
             category,
-            size
+            size,
+            owner: ownerEmail
         })
         if(!addedProduct) {
             logger.warning('Incorrect data entered for new product')
@@ -71,6 +73,10 @@ export const createProductController = async (req, res, next) =>{
 export const deleteProductController = async (req, res, next) =>{
     try {
         const { id } = req.params
+        const existingValidator = await prodDao.getProductById(id);
+        if(req.user.role !== 'admin') {
+            if(req.user.email !== existingValidator.owner) return httpResponse.Unauthorized(res, 'notAuthorizedToDelete')
+        }
         const prodDeleted = await prodDao.deleteProduct(id)
         return httpResponse.Ok(res, prodDeleted);
     } catch (error) {
@@ -88,6 +94,9 @@ export const updateProductController = async (req, res, next) =>{
             logger.error(`product with id ${id} not found`)
             return httpResponse.NotFound(res, 'Product not found!')
         } else{
+            if(req.user.role !== 'admin') {
+                if(req.user.email !== existingValidator.owner) return httpResponse.Unauthorized(res, 'notAuthorizedToModify')
+            }
             const prodUpdated = await prodDao.updateProduct(
                 id,
                 { title, description, price, stock, code, category, size }
