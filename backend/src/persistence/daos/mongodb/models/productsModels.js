@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
-const productsSchema = new mongoose.Schema({
+const ProductsSchema = new mongoose.Schema({
     title: { type: String, required: true, index: true },
     description: { type: String, required: true },
     price: { type:Number, required: true },
@@ -12,9 +12,9 @@ const productsSchema = new mongoose.Schema({
     owner:{ type: String, default:'admin'}
 });
 
-productsSchema.plugin(mongoosePaginate);
+ProductsSchema.plugin(mongoosePaginate);
 
 export const ProductsModel = mongoose.model(
     'products',
-    productsSchema 
+    ProductsSchema 
 );

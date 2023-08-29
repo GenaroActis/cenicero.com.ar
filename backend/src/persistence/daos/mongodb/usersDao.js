@@ -1,6 +1,7 @@
 import {UserModel} from './models/usersModel.js'
 import { createHash, isValidPassword } from '../../../utils/utils.js';
 import logger from '../../../utils/logger.js'
+import nonSensitiveUserData from '../../dtos/nonSensitiveUserData.js'
 export default class UsersDaoMongoDB {
     async getUserByEmail(email){
         try {
@@ -65,6 +66,25 @@ export default class UsersDaoMongoDB {
             throw new Error(error)
         }
     };
+    async getAllUsers(page = 1, limit = 5, key, value, sortField = 'price', sortOrder = 'desc') {
+        try {
+        const query = {};
+        if (key && value ) {
+            query[key] = value;
+        };
+        const options = {page, limit, sort: {}}
+        if (sortField && sortOrder) {
+            options.sort[sortField] = sortOrder;
+        };
+        const response = await UserModel.paginate(query, options);
+        const usersDTO = response.docs.map(user => new nonSensitiveUserData(user))
+        response.docs = usersDTO
+        return response;
+        } catch (error) {
+        logger.error(error)
+        throw new Error(error);
+        };
+    };
     async recoverPassword (userData) {
         try {
             const email = userData.email
@@ -78,6 +98,32 @@ export default class UsersDaoMongoDB {
                 await UserModel.findByIdAndUpdate(userSearch._id, { password: newPassword });
                 return 'passwordUpdated';
             }
+        } catch (error) {
+            logger.error(error)
+            throw new Error(error)
+        }
+    };
+    async convertToPremium (userId) {
+        try {
+            const res = await UserModel.updateOne(
+                { _id: userId },
+                { $set: { role: 'premium' } }
+            );
+            if(res) return res
+            else return false
+        } catch (error) {
+            logger.error(error)
+            throw new Error(error)
+        }
+    };
+    async convertToUser (userId) {
+        try {
+            const res = await UserModel.updateOne(
+                { _id: userId },
+                { $set: { role: 'user' } }
+            );
+            if(res) return res
+            else return false
         } catch (error) {
             logger.error(error)
             throw new Error(error)

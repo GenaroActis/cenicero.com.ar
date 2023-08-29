@@ -24,6 +24,7 @@ import SalesHistory from './adminPages/SalesHistory'
 import ProductModifier from './adminPages/ProductModifier'
 import ConfirmedPurchase from './pages/ConfirmedPurchase'
 import RecoverPassword from './pages/RecoverPassword'
+import Users from './adminPages/Users'
 import '../scss/modal.css'
 import '../scss/detalleProductos.css'
 import  '../scss/reset.css'
@@ -60,6 +61,7 @@ const Landing = () => {
                             <Route exact path="/admin/createProduct" element={<CreateProduct/>}/>
                             <Route exact path="/admin/productManager/:page?/:limit?/:key?/:value?/:sortField?/:sortOrder?" element={<ProductManager/>}/>
                             <Route exact path="/admin/salesHistory" element={<SalesHistory/>}/>
+                            <Route exact path="/admin/users" element={<Users/>}/>
                             <Route exact path="/productModifier/:id" element={<ProductModifier/>}/>
                             <Route exact path="/confirmedPurchase/:code" element={<ConfirmedPurchase/>}/>
                             <Route exact path="/recover" element={<RecoverPassword/>}/>

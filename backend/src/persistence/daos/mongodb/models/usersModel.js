@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 const UserSchema = new mongoose.Schema({
     firstName: {type: String, required:true},
@@ -8,12 +9,10 @@ const UserSchema = new mongoose.Schema({
     password: {type:String, index:true},
     role: {type:String, default:'user'},
     isGithub: {type:Boolean, default: false},
-    cartId: {type: mongoose.Schema.Types.ObjectId, ref: 'carts', require:true}
+    cartId: {type: mongoose.Schema.Types.ObjectId, require:true}
 });
 
-UserSchema.pre('find', function(){
-    this.populate('carts');
-});
+UserSchema.plugin(mongoosePaginate);
 
 export const UserModel = mongoose.model(
     'users',

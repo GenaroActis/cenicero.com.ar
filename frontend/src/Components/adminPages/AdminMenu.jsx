@@ -6,13 +6,12 @@ import Spinner from 'react-bootstrap/Spinner';
 const AdminMenu = () => {
     const { ensureIsAdmOrPrem } = useContext(AdminContext)
     const [loading, setLoading] = useState(true);
-    const verifyAdmin = async() =>{
+    const verifyAdmOrPrem = async() =>{
         const ensureFunct = await ensureIsAdmOrPrem()
         if(ensureFunct) setLoading(false)
     };
-    
     useEffect(() => {
-        verifyAdmin();
+        verifyAdmOrPrem();
     }, []);
 
     if (loading === true){
@@ -23,6 +22,7 @@ const AdminMenu = () => {
         </div>
         )
     } else {
+        
         return (
             <>
             <div className='userCard m-5'>
@@ -34,6 +34,9 @@ const AdminMenu = () => {
                 </div>
                 <div className="d-flex justify-content-center m-4 p-4">
                     <Link className="nav-link btn btn-light p-4 text-dark fs-4" aria-current="page" to={'/admin/salesHistory'}>Historial de Ventas</Link>
+                </div>
+                <div className="d-flex justify-content-center m-4 p-4">
+                    <Link className="nav-link btn btn-light p-4 text-dark fs-4" aria-current="page" to={'/admin/users'}>Usuarios</Link>
                 </div>
             </div>
             </>

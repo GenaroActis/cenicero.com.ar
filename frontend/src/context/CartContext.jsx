@@ -55,6 +55,7 @@ const CartProvider = ({children}) =>{
             });
             if (response.ok) {
                 const data = await response.json()
+                console.log(data)
                 return data.data
             } else {
                 window.location.href = 'http://localhost:3000/'

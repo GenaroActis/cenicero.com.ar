@@ -61,9 +61,9 @@ const AdminProvider = ({children}) =>{
             });
             if (response.ok) {
                 const res = await response.json()
-                if(res.data === 'Authorized user') return res.data
-            } else {
-                const res = await response.json()
+                if(res.message === 'Success') return res.data
+            } else { 
+                await response.json()
                 window.location.href = 'http://localhost:3000/'
                 throw new Error('Unauthorized user');
             }
@@ -110,8 +110,7 @@ const AdminProvider = ({children}) =>{
                 },
             });
             if (response.ok) {
-                const res = await response.json();
-                console.log(res)
+                await response.json();
                 generateNotifySuccess('Product deleted successfully!')
                 setTimeout(()=>{window.location.reload()}, 2100 )
             } else {
@@ -170,8 +169,59 @@ const AdminProvider = ({children}) =>{
         };
     };
 
+    const getUsers = async (page, limit, key, value, sortField, sortOrder) =>{
+        try{
+            const token = localStorage.getItem('token');
+            const url = `http://localhost:8080/api/admin/users/?${page ?? 'page=1'}&${limit ?? 'limit=5'}&${key}&${value}&${sortField ?? 'sortField=title'}&${sortOrder ?? 'sortOrder=asc'}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                return data.data
+            } else {
+                window.location.href = 'http://localhost:3000/'
+                throw new Error('Error en la solicitud');
+            }
+        } catch (error) {
+            console.log(error)
+        };
+    };
+    
+    const changeRole = async (userData) =>{
+        try {
+            const token = localStorage.getItem('token');
+            let url = undefined
+            if(userData.role === 'user') url = `http://localhost:8080/api/admin/toPremium/${userData.id}`
+            if(userData.role === 'premium') url = `http://localhost:8080/api/admin/toUser/${userData.id}`
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                },
+                body: JSON.stringify(userData),
+            });
+            if (response.ok) {
+                const res = await response.json();
+                return res
+            } else {
+                const error = await response.json()
+                console.log(error)
+                throw new Error('Error en la solicitud');
+                }
+            }
+        catch (error) {
+            console.log(error)
+        };
+    };
+
     return(
-        <AdminContext.Provider value={{ ensureIsAdmOrPrem, ensureIsAdmin, deleteProduct, newProduct, updateProduct, serchProduct,}}>
+        <AdminContext.Provider value={{changeRole, getUsers, ensureIsAdmOrPrem, ensureIsAdmin, deleteProduct, newProduct, updateProduct, serchProduct,}}>
         {children}
         </AdminContext.Provider>
     )

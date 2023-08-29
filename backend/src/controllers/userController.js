@@ -47,6 +47,33 @@ export const login = async(req, res, next)=>{
     };
 };
 
+export const getAllUsersController = async (req, res, next) =>{
+    try {
+        const { page, limit, key, value, sortField, sortOrder } = req.query;
+        const allUsers = await userDao.getAllUsers(page, limit, key, value, sortField, sortOrder);
+        const nextLink = allUsers.hasNextPage ? `http://localhost:3000/users/page=${allUsers.nextPage}` : null
+        const prevLink = allUsers.hasPrevPage ? `http://localhost:3000/users/page=${allUsers.prevPage}` : null
+        const userData = req.user
+        const usersFile = {
+            results: allUsers.docs,
+            userData: userData,
+            info: {
+                count: allUsers.totalDocs,
+                pages: allUsers.totalPages,
+                actualPage: allUsers.page,
+                hasPrevPage: allUsers.hasPrevPage,
+                hasNextPage: allUsers.hasNextPage,
+                nextPageLink: nextLink,
+                prevPageLink: prevLink
+            }
+        };
+        return httpResponse.Ok(res, usersFile);
+    } catch (error) {
+        logger.error(error)
+        next(error)
+    };
+};
+
 export const recoverPasswordController = async(req, res, next)=>{
     try {
         const { email, newPassword } = req.body;
@@ -120,3 +147,31 @@ export const checkAuthToRecoverPassController = async (req, res, next) =>{
         next(error)
     };
 };
+
+export const convertToPremiumController = async (req, res, next) =>{
+    try {
+        const userId = req.params.userId;
+        if(req.user.role === "admin") {
+            await userDao.convertToPremium(userId)
+            return httpResponse.Ok(res, "User role update to premium")
+        }
+        else return httpResponse.Unauthorized(res, 'Unauthorized user')
+    } catch (error) {
+        logger.error(error)
+        next(error)
+    };
+};
+export const convertToUserController = async (req, res, next) =>{
+    try {
+        const userId = req.params.userId;
+        if(req.user.role === "admin") {
+            await userDao.convertToUser(userId)
+            return httpResponse.Ok(res, "User role update to user")
+        }
+        else return httpResponse.Unauthorized(res, 'Unauthorized user')
+    } catch (error) {
+        logger.error(error)
+        next(error)
+    };
+};
+

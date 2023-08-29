@@ -13,10 +13,15 @@ import './passport/jwt.js';
 import './passport/github.js';
 import cors from 'cors';
 import helmet from 'helmet'
+import swaggerUI from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
+import { doc } from './docs/doc.js';
 
 const app = express();
 const port = 8080;
 
+const specs = swaggerJSDoc(doc);
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());

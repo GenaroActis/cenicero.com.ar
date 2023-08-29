@@ -1,7 +1,14 @@
 import { Router } from "express";
-import { ensureIsAdminController, ensureIsAdmOrPremController } from '../../controllers/userController.js';
+import { 
+    ensureIsAdminController, 
+    ensureIsAdmOrPremController,
+    getAllUsersController,
+    convertToPremiumController,
+    convertToUserController
+} from '../../controllers/userController.js';
 import { checkAuth } from '../../jwt/auth.js';
 import logger from '../../utils/logger.js'
+import { ensureIsAdmOrPrem } from "../../middlewares/ensureIsAdmOrPrem.js";
 const router = Router();
 
 router.get('/loggerTest', (req, res) => {
@@ -15,5 +22,8 @@ router.get('/loggerTest', (req, res) => {
 });
 router.get('/only', checkAuth, ensureIsAdminController);
 router.get('/', checkAuth, ensureIsAdmOrPremController);
+router.put('/toPremium/:userId', checkAuth, convertToPremiumController )
+router.put('/toUser/:userId', checkAuth, convertToUserController )
+router.get('/users', checkAuth, ensureIsAdmOrPrem, getAllUsersController)
 
 export default router

@@ -13,6 +13,7 @@ import { validateRegister} from '../../middlewares/validators/userValidator.js';
 import { validateChangePass } from '../../middlewares/validators/changePassValidator.js'
 const router = Router();
 
+
 router.post('/register', validateRegister, register);
 router.post('/login', login)
 router.get('/logout', logoutUserController)
