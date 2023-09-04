@@ -98,3 +98,34 @@ export const finalizePurchaseController = async (req, res, next)=>{
         next(error)
     };
 };
+export const getAllTicketsController = async (req, res, next)=>{
+    try {
+        try {
+            const { page, limit, key, value, sortField, sortOrder } = req.query;
+            const allTickets = await ticketDao.getAllTickets(page, limit, key, value, sortField, sortOrder);
+            const nextLink = allTickets.hasNextPage ? `http://localhost:3000/admin/salesHistory/page=${allTickets.nextPage}` : null
+            const prevLink = allTickets.hasPrevPage ? `http://localhost:3000/admin/salesHistory/page=${allTickets.prevPage}` : null
+            const userData = req.user
+            const ticketsFile = {
+                results: allTickets.docs,
+                userData: userData,
+                info: {
+                    count: allTickets.totalDocs,
+                    pages: allTickets.totalPages,
+                    actualPage: allTickets.page,
+                    hasPrevPage: allTickets.hasPrevPage,
+                    hasNextPage: allTickets.hasNextPage,
+                    nextPageLink: nextLink,
+                    prevPageLink: prevLink
+                }
+            };
+            return httpResponse.Ok(res, ticketsFile);
+        } catch (error) {
+            logger.error(error)
+            next(error)
+        };
+    } catch (error) {
+        logger.error(error)
+        next(error)
+    };
+};

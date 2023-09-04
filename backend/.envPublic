@@ -1,3 +1,4 @@
+NodeEnv = 'development or production'
 MongoDBUrl= ''
 PrivateKeyJWT= ''
 ClientIDGithub = ''

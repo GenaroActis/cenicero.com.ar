@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 const TicketSchema = new mongoose.Schema({
     products: [
@@ -15,6 +16,8 @@ const TicketSchema = new mongoose.Schema({
             cellPhone: {type: String, required:true}
         }
 });
+
+TicketSchema.plugin(mongoosePaginate);
 
 TicketSchema.pre('find', function(){
     this.populate('products');

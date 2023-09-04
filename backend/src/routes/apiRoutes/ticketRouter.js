@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { 
     generateTicketController,
     getTicketByCodeController,
-    finalizePurchaseController 
+    finalizePurchaseController,
 } from '../../controllers/ticketController.js'
 import { checkAuth } from '../../jwt/auth.js';
 const router = Router()

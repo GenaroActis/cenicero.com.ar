@@ -1,0 +1,73 @@
+paths:
+  /api/products:
+    post:
+      tags: 
+      - New product.
+      summary: Registration of new product in the database.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/parameters/schemas/BodyNewProductPost'
+        required: true
+      responses:
+        200:
+          description: Product added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NewProduct'
+        400:
+          description: Bad Request, error not correct requirements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ValidationSchemaError'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    get:
+      tags:
+      - Get all products
+      summary: Get all products from database.
+      responses:
+        200:
+          description: Array of products.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/GetAll'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+  /api/products/:id:
+    get:
+      tags: 
+      - Search product by id.
+      summary: Brings a unique product by its id passed by parameters.
+      responses:
+        200:
+          description: Product found successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/GetById'
+        400:
+          description: Bad Request, error not correct requirements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ValidationSchemaError'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+

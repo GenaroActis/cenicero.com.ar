@@ -1,0 +1,43 @@
+components:
+  parameters:
+    schemas:
+      BodyNewProductPost:
+        type: object
+        required:
+          - title
+          - description
+          - price
+          - stock
+          - category
+          - size
+        properties:
+          title:
+            type: string
+            description: Product name.
+          description:
+            type: string
+            description: Description of the product, for example measures.
+          price:
+            type: number
+            description: Product price per unit.
+          stock: 
+            type: number
+            description: Stock of product units.
+          category:
+            type: string
+            description: Product category.
+          size:
+            type: string
+            description: Product size.
+        example:
+          title: Chomba Polo Ralph Lauren
+          description: Largo de 70cm, ancho de 65cm
+          price: 9000
+          stock: 10
+          category: chombas
+          size: L
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

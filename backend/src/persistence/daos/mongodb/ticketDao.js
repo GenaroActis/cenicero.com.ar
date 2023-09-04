@@ -38,4 +38,21 @@ export default class TicketDaoMongoDB {
             throw new Error(error);
         };
     };
+    async getAllTickets(page = 1, limit = 5, key, value, sortField = 'price', sortOrder = 'desc') {
+        try {
+        const query = {};
+        if (key && value ) {
+            query[key] = value;
+        };
+        const options = {page, limit, sort: {}}
+        if (sortField && sortOrder) {
+            options.sort[sortField] = sortOrder;
+        };
+        const response = await TicketModel.paginate(query, options);
+        return response;
+        } catch (error) {
+        logger.error(error)
+        throw new Error(error);
+        };
+    };
 }

@@ -219,9 +219,33 @@ const AdminProvider = ({children}) =>{
             console.log(error)
         };
     };
+    
+    const getPurchases = async (page, limit, key, value, sortField, sortOrder) =>{
+        try{
+            const token = localStorage.getItem('token');
+            const url = `http://localhost:8080/api/admin/all?${page ?? 'page=1'}&${limit ?? 'limit=5'}&${key}&${value}&${sortField ?? 'sortField=title'}&${sortOrder ?? 'sortOrder=asc'}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                return data.data
+            } else {
+                await response.json();
+                window.location.href = 'http://localhost:3000/'
+                throw new Error('Error en la solicitud');
+            }
+        } catch (error) {
+            console.log(error)
+        };
+    };
 
     return(
-        <AdminContext.Provider value={{changeRole, getUsers, ensureIsAdmOrPrem, ensureIsAdmin, deleteProduct, newProduct, updateProduct, serchProduct,}}>
+        <AdminContext.Provider value={{getPurchases, changeRole, getUsers, ensureIsAdmOrPrem, ensureIsAdmin, deleteProduct, newProduct, updateProduct, serchProduct,}}>
         {children}
         </AdminContext.Provider>
     )

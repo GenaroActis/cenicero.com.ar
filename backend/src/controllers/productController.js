@@ -11,10 +11,8 @@ export const getAllProductsController = async (req, res, next) =>{
         const allProducts = await prodDao.getAllProducts(page, limit, key, value, sortField, sortOrder);
         const nextLink = allProducts.hasNextPage ? `http://localhost:3000/products/page=${allProducts.nextPage}` : null
         const prevLink = allProducts.hasPrevPage ? `http://localhost:3000/products/page=${allProducts.prevPage}` : null
-        const userData = req.user
         const productsFile = {
             results: allProducts.docs,
-            userData: userData,
             info: {
                 count: allProducts.totalDocs,
                 pages: allProducts.totalPages,

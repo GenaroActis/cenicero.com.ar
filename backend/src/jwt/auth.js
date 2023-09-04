@@ -21,17 +21,17 @@ export const generateToken = (user) =>{
 
 export const checkAuth = async (req, res, next) => {
     const authHeader = req.get('Authorization');
-    if(!authHeader) return res.status(401).json({ msg: 'Unauthorized1' });
+    if(!authHeader) return res.status(401).json({ msg: 'Unauthorized' });
     try {
         const token = authHeader.split(' ')[1];
         const decode = jwt.verify(token, PrivateKeyJWT);
         const user = await userDao.getUserById(decode.userId);
-        if(!user) return res.status(401).json({ msg: 'Unauthorized2' });
+        if(!user) return res.status(401).json({ msg: 'Unauthorized' });
         req.user = user;
         next();
     } catch (error) {
     logger.error(error)
-    return res.status(404).json({ msg: 'Unauthorized3' })
+    return res.status(404).json({ msg: 'Unauthorized' })
     };
 };
 

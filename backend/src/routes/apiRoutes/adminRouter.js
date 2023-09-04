@@ -6,6 +6,7 @@ import {
     convertToPremiumController,
     convertToUserController
 } from '../../controllers/userController.js';
+import { getAllTicketsController } from '../../controllers/ticketController.js'
 import { checkAuth } from '../../jwt/auth.js';
 import logger from '../../utils/logger.js'
 import { ensureIsAdmOrPrem } from "../../middlewares/ensureIsAdmOrPrem.js";
@@ -25,5 +26,6 @@ router.get('/', checkAuth, ensureIsAdmOrPremController);
 router.put('/toPremium/:userId', checkAuth, convertToPremiumController )
 router.put('/toUser/:userId', checkAuth, convertToUserController )
 router.get('/users', checkAuth, ensureIsAdmOrPrem, getAllUsersController)
+router.get('/all', checkAuth, ensureIsAdmOrPrem, getAllTicketsController)
 
 export default router
