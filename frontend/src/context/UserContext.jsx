@@ -51,6 +51,9 @@ const UserProvider = ({children}) =>{
                     if(error.errors === 'EmailAlreadyRegistered'){
                         generateNotifyError('There is already a registered user with this email!')
                     }
+                    if(error.errors[0].msg === 'InvalidEmail'){
+                        generateNotifyError('Enter a valid email!')
+                    }
                 } else{
                     throw new Error('Error en la solicitud');
                 }

@@ -55,10 +55,9 @@ const CartProvider = ({children}) =>{
             });
             if (response.ok) {
                 const data = await response.json()
-                console.log(data)
                 return data.data
             } else {
-                window.location.href = 'http://localhost:3000/'
+                window.location.href = 'http://localhost:3000'
                 throw new Error('Error en la solicitud');
             }
         } catch (error) {
@@ -112,12 +111,8 @@ const CartProvider = ({children}) =>{
     const deleteAllProductsToCart = async () =>{
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:8080/api/carts/all`, {
-                method: 'DELETE',
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token,
-                },
+            const response = await fetch(`http://localhost:8080/api/carts`, {
+                                                    
             });
             if (response.ok) {
                 await response.json();
@@ -130,9 +125,9 @@ const CartProvider = ({children}) =>{
         };
     };
 
-    const updateQuantityToCart = async (quantity) =>{
+    const updateQuantityToCart = async (quantity, prodId) =>{
         try {
-            const response = await fetch(`http://localhost:8080/api/carts/quantity`, {
+            const response = await fetch(`http://localhost:8080/api/carts/quantity/${prodId}`, {
                 method: 'PUT',
                 headers: {
                 'Content-Type': 'application/json',

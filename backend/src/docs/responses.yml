@@ -1,15 +1,68 @@
 components:
   schemas:
+    User:
+      Register:
+        type: object
+        properties:
+          id:
+            type: string
+            description: User auto-generated ID from MongoDB.
+          firstName:
+            type: string
+            description: User first name.
+          lastName:
+            type: string
+            description: User last name.
+          email:
+            type: string
+            description: User email.
+          role:
+            type: string
+            description: Will determine access to some endpoints.
+          isGithub:
+            type: boolean
+            description: Will show which user registered with github.
+          cartId:
+            type: string
+            description: User cart auto-generated ID from MongoDB.
+      EmailAlredyRegistered:
+        type: object
+        properties:
+          message: 
+            type: string
+            description: Error message conflict with email.
+        example:
+          message: EmailAlreadyRegistered
+      Login:
+        type: object
+        properties:
+          message:
+            type: string
+            description: Login OK.
+          accesToken:
+            type: string
+            description: Jwt authorization token
+        example:
+          message: Login OK
+          accesToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGVkNDFhNjA2Njk4ZDUwZjM2NjAwNjMiLCJmaXJzdE5hbWUiOiJHZW5hcm8iLCJsYXN0TmFtZSI6IkFjdGlzIiwiZW1haWwiOiJnZW5hcm9hY3RpczNAZ21haWwuY29tIiwiYWdlIjowLCJjYXJ0SWQiOiI2NGVkNDFhNTA2Njk4ZDUwZjM2NjAwNjAiLCJpYXQiOjE2OTM5Mjk5ODQsImV4cCI6MTY5MzkzMTc4NH0.hOT4InsvR_HTyK3aVv-Xo03KEFvTNxzlXcUdrpftxkk
+      IsGithub:
+        type: object
+        properties: 
+          message:
+            type: string
+            description: Error message registered user with Github.
+        example:
+          message: isGithub
     Products:
       NewProduct:
         type: object
         properties:
           _id: 
             type: string
-            description: Product auto-generated ID.
+            description: Product auto-generated ID from MongoDB.
           title: 
             type: string
-            description: Product name
+            description: Product name.
           description:
             type: string
             description: Description of the product, for example measures.
@@ -55,7 +108,7 @@ components:
                 description: Number of pages.
               actualPage: 
                 type: number
-                description: Current response page
+                description: Current response page.
               hasNextPage: 
                 type: boolean
                 description: Validates the existence of a next page.
@@ -74,10 +127,10 @@ components:
               properties: 
                 _id: 
                   type: string
-                  description: Product auto-generated ID.
+                  description: Product auto-generated ID from MongoDB.
                 title: 
                   type: string
-                  description: Product name
+                  description: Product name.
                 description:
                   type: string
                   description: Description of the product, for example measures.
@@ -107,6 +160,14 @@ components:
             description: Schema validation error response.        
         example:
           message: One of the fields is not correct.
+      ProductNotFound:
+        type: object
+        properties:
+          message:
+            type: string
+            description: Product not found error response.        
+        example:
+          message: Product not found!.
       NotFound:
         type: object
         properties:
@@ -115,3 +176,36 @@ components:
             description: Server error message.
         example:
           message: Internal Server Error.
+      Unauthorized:
+        type: object
+        properties:
+          message:
+            type: string
+            description: The user is not authorized.
+        example:
+          message: Unauthorized.
+    Carts:
+      Cart:
+        type: object
+        properties:
+          _id: 
+            type: string
+            description: Cart auto-generated ID from MongoDB.
+          products:
+            type: array
+            items:
+              properties: 
+                _id: 
+                  type: string
+                  description: Product auto-generated ID from MongoDB.
+                quantity:
+                  type: number
+                  description: Quantity per unit of the product in the cart.
+      NotFoundCart:
+        type: object
+        properties:
+          message:
+            type: string
+            description: Cart not found error response.
+        example:
+          message: The cart you are trying to access does not exist.

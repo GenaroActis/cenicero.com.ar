@@ -1,6 +1,51 @@
 components:
   parameters:
     schemas:
+      BodyNewUser:
+        type: object
+        required: 
+          - firstName
+          - lastName
+          - email
+          - age
+          - password
+        properties:
+          firstName:
+            type: string
+            description: User first name.
+          lastName:
+            type: string
+            description: User last name.
+          email:
+            type: string
+            description: User email.
+          age:
+            type: number
+            description: User age.
+          password:
+            type: string
+            description: Password of the user to be hashed, must have 6 or more characters.
+        example:
+          firstName: Juan
+          lastName: Ramirez
+          email: juanramirez@gmail.com
+          age: 20
+          password: 123456
+      BodyLogin:
+        type: object
+        required: 
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            description: User email.
+          password:
+            type: string
+            description: Password of the user.
+        example:
+          email: juanramirez@gmail.com
+          password: jr123456
       BodyNewProductPost:
         type: object
         required:
@@ -39,5 +84,7 @@ components:
   securitySchemes:
     BearerAuth:
       type: http
+      # in: header
+      # name: Authorization
       scheme: bearer
       bearerFormat: JWT

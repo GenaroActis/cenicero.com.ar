@@ -19,7 +19,6 @@ function ModalCart(children) {
         const price = await totalPriceFunction();
         setTotalPrice(price);
         setCartProducts(data);
-        console.log(data)
         setLoading(false);
         } catch (error) {
             console.error(error);

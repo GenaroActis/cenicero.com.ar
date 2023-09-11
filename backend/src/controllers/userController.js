@@ -17,15 +17,13 @@ export const register = async(req, res, next)=>{
             const user = {firstName, lastName, email, age, password, cartId:newCart};
             if(firstName === 'admin'){user.role = 'admin'};
             const newUser = await userDao.createUser(user);
-            const token = generateToken(newUser);
-            return httpResponse.Ok(res, token);
+            return httpResponse.Ok(res, newUser);
         };
     } catch (error) {
         logger.error(error)
         next(error);
     };
 };
-
 export const login = async(req, res, next)=>{
     try {
         const { email, password } = req.body;
@@ -38,7 +36,7 @@ export const login = async(req, res, next)=>{
                 res
                 .status(200)
                 .header('Authorization', accessToken)
-                .json({msg: 'Login OK', accessToken})
+                .json({message: 'Login OK', accessToken})
             }
         }
     } catch (error) {
@@ -46,7 +44,6 @@ export const login = async(req, res, next)=>{
         next(error);
     };
 };
-
 export const getAllUsersController = async (req, res, next) =>{
     try {
         const { page, limit, key, value, sortField, sortOrder } = req.query;
@@ -73,7 +70,6 @@ export const getAllUsersController = async (req, res, next) =>{
         next(error)
     };
 };
-
 export const recoverPasswordController = async(req, res, next)=>{
     try {
         const { email, newPassword } = req.body;
@@ -85,7 +81,6 @@ export const recoverPasswordController = async(req, res, next)=>{
         next(error);
     };
 };
-
 export const logoutUserController = async (req, res, next) =>{
     try {
         req.session.destroy((err) => {
@@ -100,8 +95,6 @@ export const logoutUserController = async (req, res, next) =>{
         next(error)
     };
 };
-
-
 export const renderProfile = async(req, res, next) =>{
     try {
         const userData = req.user
@@ -115,7 +108,6 @@ export const renderProfile = async(req, res, next) =>{
         next(error)
     };
 };
-
 export const ensureIsAdminController = async (req, res, next) =>{
     try {
         if(req.user.role === "admin") 
@@ -126,7 +118,6 @@ export const ensureIsAdminController = async (req, res, next) =>{
         next(error)
     };
 };
-
 export const ensureIsAdmOrPremController = async (req, res, next) =>{
     try {
         const userRole = req.user.role
@@ -138,7 +129,6 @@ export const ensureIsAdmOrPremController = async (req, res, next) =>{
         next(error)
     };
 };
-
 export const checkAuthToRecoverPassController = async (req, res, next) =>{
     try {
         return httpResponse.Ok(res, req.email)
@@ -147,7 +137,6 @@ export const checkAuthToRecoverPassController = async (req, res, next) =>{
         next(error)
     };
 };
-
 export const convertToPremiumController = async (req, res, next) =>{
     try {
         const userId = req.params.userId;
@@ -174,4 +163,12 @@ export const convertToUserController = async (req, res, next) =>{
         next(error)
     };
 };
-
+// const deleteInactiveUsersController = async () =>{
+//     try {
+//         const res = await userDao.deleteInactiveUsers()
+//         console.log(res)
+//     } catch (error) {
+//         logger.error(error)
+//     }
+// }
+// deleteInactiveUsersController()

@@ -14,7 +14,7 @@ router.get('/', checkAuth, getCartController);
 router.post('/', createCartController);
 router.put('/:prodId', checkAuth, addProductToCartController);
 router.put('/quantity/:prodId', checkAuth, updateQuantityOfProductController);
-router.delete('/all', checkAuth, deleteAllProductsToCartController);
+router.delete('/', checkAuth, deleteAllProductsToCartController);
 router.delete('/:prodId', checkAuth, deleteProductToCartController);
 
 export default router

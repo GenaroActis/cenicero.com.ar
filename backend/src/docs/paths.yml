@@ -1,9 +1,83 @@
 paths:
+  /api/user/register:
+    post:
+      tags: 
+      - User register with data sent by body.
+      summary: Register a new user in the database.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/parameters/schemas/BodyNewUser'
+        required: true
+      responses:
+        200:
+          description: User registered successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User/Register'
+        400:
+          description: Bad Request, error not correct requirements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ValidationSchemaError'
+        409:
+          description: Conflict, there is already a registered user with that email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User/EmailAlredyRegistered'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+  /api/user/login:
+    post:
+      tags: 
+      - User login with data sent by body.
+      summary: Login User.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/parameters/schemas/BodyLogin'
+        required: true
+      responses:
+        200:
+          description: User login successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User/Login'
+        400:
+          description: Bad Request, error not correct requirements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ValidationSchemaError'
+        409:
+          description: Conflict, the user was registered with github must log in with Github.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User/IsGithub'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
   /api/products:
     post:
       tags: 
       - New product.
       summary: Registration of new product in the database.
+      security: 
+        - BearerAuth: []
       requestBody:
         content:
           application/json:
@@ -23,6 +97,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Products/ValidationSchemaError'
+        401:
+          description: Unauthorized, the user is not authorized to create products.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/Unauthorized'
         500:
           description: Internal server error response.
           content:
@@ -33,6 +113,8 @@ paths:
       tags:
       - Get all products
       summary: Get all products from database.
+      security: 
+        - BearerAuth: []
       responses:
         200:
           description: Array of products.
@@ -40,34 +122,293 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Products/GetAll'
+        401:
+          description: Unauthorized, the user is not authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/Unauthorized'
         500:
           description: Internal server error response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Products/NotFound'
-  /api/products/:id:
+  /api/products/{id}:
     get:
       tags: 
       - Search product by id.
       summary: Brings a unique product by its id passed by parameters.
+      security: 
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: ObjectId
+          description: The MongoDB id of the product.
       responses:
         200:
           description: Product found successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Products/GetById'
-        400:
-          description: Bad Request, error not correct requirements.
+                $ref: '#/components/schemas/Products/NewProduct'
+        401:
+          description: Unauthorized, the user is not authorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Products/ValidationSchemaError'
+                $ref: '#/components/schemas/Products/Unauthorized'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ProductNotFound'
         500:
           description: Internal server error response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Products/NotFound'
+    put:
+      tags: 
+      - Update existing product.
+      summary: Update the product with the new value sent by the body.
+      security: 
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: ObjectId
+          description: The MongoDB id of the product.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/parameters/schemas/BodyNewProductPost'
+        required: true
+      responses:
+        200:
+          description: Product update successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NewProduct'
+        401:
+          description: Unauthorized, the user is not authorized to modify this product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/Unauthorized'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ProductNotFound'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    delete:
+      tags: 
+      - Delete an existing product.
+      summary: Removes a product from the database with the id passed by params.
+      security: 
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: ObjectId
+          description: The MongoDB id of the product.
+      responses:
+        200:
+          description: Product deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NewProduct'
+        401:
+          description: Unauthorized, the user is not authorized to remove this product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/Unauthorized'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+  /api/carts:
+    get: 
+      tags: 
+        - Get the cart.
+      summary: Get the user cart by getting the id from the token payload.
+      security: 
+        - BearerAuth: []
+      responses:
+        200:
+          description: Cart found successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        401:
+          description: Unauthorized, the user is not authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/Unauthorized'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    post:
+      tags: 
+        - Create the cart.
+      summary: Create a cart.
+      security: 
+        - BearerAuth: []
+      responses:
+        200:
+          description: Cart Create successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        401:
+          description: Unauthorized, the user is not authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/Unauthorized'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    delete:
+      tags: 
+        - Delete all products to cart.
+      security: 
+        - BearerAuth: []
+      summary: Delete all products, to the user's cart.
+      responses:
+        200:
+          description: Products deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        401:
+          description: Unauthorized, the user is not authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/Unauthorized'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing cart.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/NotFoundCart'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+  /api/carts/{prodId}:
+    put:
+      tags: 
+        - Add a product to cart.
+      summary: Adds a product with id passed from parameters, to the user's cart.
+      security: 
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: prodId
+          schema:
+            type: string
+            format: ObjectId
+          description: The MongoDB id of the product.
+      responses:
+        200:
+          description: Product added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        401:
+          description: Unauthorized, the user is not authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/Unauthorized'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ProductNotFound'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    delete:
+      tags: 
+        - Delete a product to cart.
+      summary: Delete a product with id passed from parameters, to the user's cart.
+      security: 
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: prodId
+          schema:
+            type: string
+            format: ObjectId
+          description: The MongoDB id of the product.
+      responses:
+        200:
+          description: Product deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        401:
+          description: Unauthorized, the user is not authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/Unauthorized'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ProductNotFound'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+
+
+
 

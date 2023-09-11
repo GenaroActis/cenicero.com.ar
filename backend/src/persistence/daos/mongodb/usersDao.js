@@ -38,7 +38,8 @@ export default class UsersDaoMongoDB {
                 return false
             } else {
                 const newUser = await UserModel.create({...userData, password: createHash(password)});
-                return newUser
+                const newUserDtoRes = new nonSensitiveUserData(newUser)
+                return newUserDtoRes
             };
         } catch (error) {
             logger.error(error)
@@ -56,7 +57,10 @@ export default class UsersDaoMongoDB {
                 } else {
                     const passwordValidate = isValidPassword(password, userSearch)
                     if(!passwordValidate) return false
-                    else return userSearch
+                    else {
+                        await UserModel.findByIdAndUpdate(userSearch._id, {lastActivity: new Date()})
+                        return userSearch
+                    }
                 }
             } else{
                 return false
@@ -129,4 +133,16 @@ export default class UsersDaoMongoDB {
             throw new Error(error)
         }
     };
+    // async deleteInactiveUsers (){
+    //     try {
+    //         const period = 0.01
+    //         const limit = new Date(date.now() - period)
+    //         const res = await UserModel.deleteMany({lastActivity: {$lt: limit}})
+    //         console.log(res)
+    //         return res
+    //     } catch (error) {
+    //         logger.error(error)
+    //         throw new Error(error)
+    //     }
+    // }
 };

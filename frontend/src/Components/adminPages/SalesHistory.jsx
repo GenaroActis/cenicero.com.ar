@@ -3,8 +3,6 @@ import { AdminContext } from '../../context/AdminContext';
 import { Link, useParams } from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner';
 import { ToastContainer} from 'react-toastify';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
 
 const SalesHistory = () => {
     const { getPurchases } = useContext(AdminContext)
