@@ -58,4 +58,5 @@ const httpServer = app.listen(port, ()=>{
     console.log('server ok en port', port);
 });
 
+export default app;
 

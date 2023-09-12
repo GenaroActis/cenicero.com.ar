@@ -9,12 +9,12 @@ const httpResponse = new HttpResponse();
 
 export const register = async(req, res, next)=>{
     try {
-        const { firstName, lastName, email, age, password } = req.body;
+        const { firstName, lastName, email, age, password, role } = req.body;
         const exist = await userDao.getUserByEmail(email);
         if(exist) return httpResponse.Conflict(res, 'EmailAlreadyRegistered')
         else{
             const newCart = await cartDao.createCart();
-            const user = {firstName, lastName, email, age, password, cartId:newCart};
+            const user = {firstName, lastName, email, age, password, cartId:newCart, role};
             if(firstName === 'admin'){user.role = 'admin'};
             const newUser = await userDao.createUser(user);
             return httpResponse.Ok(res, newUser);
