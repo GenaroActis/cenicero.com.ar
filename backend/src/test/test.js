@@ -21,7 +21,7 @@ const user = {
     role: 'admin',
 }
 
-let token = undefined
+// let token = undefined
 
 describe('Integral test of an ecommerce.', ()=>{
     // beforeEach(async()=>{

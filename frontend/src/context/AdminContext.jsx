@@ -196,8 +196,8 @@ const AdminProvider = ({children}) =>{
         try {
             const token = localStorage.getItem('token');
             let url = undefined
-            if(userData.role === 'user') url = `http://localhost:8080/api/admin/toPremium/${userData.id}`
-            if(userData.role === 'premium') url = `http://localhost:8080/api/admin/toUser/${userData.id}`
+            if(userData.role === 'user') url = `http://localhost:8080/api/admin/toPremium/${userData._id}`
+            if(userData.role === 'premium') url = `http://localhost:8080/api/admin/toUser/${userData._id}`
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {

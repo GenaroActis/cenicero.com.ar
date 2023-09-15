@@ -46,7 +46,7 @@ const Users = () => {
         <div className='d-flex flex-column justify-content-center align-items-center mt-5'>
                 <div className="row" id="productos">
                 {cardsUsers.map((user) => (
-                        <div key={user.id} className="card text-dark mt-5">
+                        <div key={user._id} className="card text-dark mt-5">
                             {/* <img src={product.img1} className="card-img-top mt-2 img-fluid" alt="" srcSet="" />
                             <img src={product.img2} className="card-img img-fluid" id="img2" alt="" srcSet="" /> */}
                             <div className="card-body">
