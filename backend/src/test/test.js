@@ -26,10 +26,6 @@ let userCartId = undefined
 let prodId = undefined
 
 describe('Integral test of an ecommerce.', ()=>{
-    // beforeEach(async()=>{
-    //     await mongoose.connection.collection('products').drop();
-    // })
-
     // User Test
     test('[POST] /api/user/register', async()=>{
         const res = await request(app).post('/api/user/register').send(user)
