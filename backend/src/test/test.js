@@ -21,12 +21,16 @@ const user = {
     role: 'admin',
 }
 
-// let token = undefined
+let token = undefined
+let userCartId = undefined
+let prodId = undefined
 
 describe('Integral test of an ecommerce.', ()=>{
     // beforeEach(async()=>{
     //     await mongoose.connection.collection('products').drop();
     // })
+
+    // User Test
     test('[POST] /api/user/register', async()=>{
         const res = await request(app).post('/api/user/register').send(user)
         
@@ -40,6 +44,7 @@ describe('Integral test of an ecommerce.', ()=>{
         const roleRes = res.body.data.role;
         const roleExpected = user.role;
         const statusCode = res.statusCode;
+        userCartId = res.body.data.cartId
 
         expect(id).toBeDefined()
         expect(firstNameRes).toEqual(firstNameExpected)
@@ -54,13 +59,121 @@ describe('Integral test of an ecommerce.', ()=>{
             password: user.password
         } 
         const res = await request(app).post('/api/user/login').send(userLogin)
+        const message = res.body.message
         token = res.body.accessToken
+        const statusCode = res.statusCode;
+        expect(message).toEqual('Login OK')
+        expect(token).toBeDefined()
+        expect(statusCode).toBe(200)
     })
-    // test('[POST] /api/products', async()=>{
-    //     // console.log(product)
-    //     const res = await request(app)
-    //     .post('/api/products').send(product)
-    //     .set('Authorization', authToken);
-    //     // console.log(res.body)
-    // })
+    test('[GET], /api/admin/only', async()=>{
+        const res = await request(app).get('/api/admin/only')
+        .set('Authorization', `Bearer ${token}`)
+        const message = res.body.message
+        const data = res.body.data
+        const statusCode = res.statusCode;
+        if(user.role === 'admin'){
+            expect(message).toEqual('Success')
+            expect(data).toEqual('Authorized user')
+            expect(statusCode).toBe(200)
+        } else{
+            expect(message).toEqual('Unauthorized')
+            expect(statusCode).toBe(401)
+        }
+    })
+
+    // Products Test
+    test('[POST], /api/products', async()=>{
+        const res = await request(app).post('/api/products').send(product)
+        .set('Authorization', `Bearer ${token}`);
+        const message = res.body.message;
+        const data = res.body.data;
+        const statusCode = res.statusCode;
+        if(user.role === "admin"  || user.role === "premium" ) {
+            prodId = res.body.data._id
+            expect(message).toEqual('Success')
+            expect(typeof data).toBe('object')
+            expect(statusCode).toBe(200)
+        } else{
+            expect(message).toEqual('Unauthorized')
+            expect(statusCode).toBe(401)
+        }
+    })
+    test('[GET] /api/products', async()=>{
+        const res = await request(app).get('/api/products')
+        .set('Authorization', `Bearer ${token}`);
+        const message = res.body.message
+        const data = res.body.data
+        const statusCode = res.statusCode;
+        expect(message).toEqual('Success')
+        expect(typeof data).toBe('object')
+        expect(statusCode).toBe(200)
+    })
+    test('[DELETE] /api/products/:prodId', async() =>{
+        const res = await request(app).delete(`/api/products/${prodId}`)
+        .set('Authorization', `Bearer ${token}`);
+        const message = res.body.message;
+        const data = res.body.data;
+        const statusCode = res.statusCode;
+        if(user.role === "admin"  || user.role === "premium" ) {
+            expect(message).toEqual('Success')
+            expect(typeof data).toBe('object')
+            expect(statusCode).toBe(200)
+        } else{
+            expect(message).toEqual('Unauthorized')
+            expect(statusCode).toBe(401)
+        }
+    })
+    test('[POST], /api/products', async()=>{
+        const res = await request(app).post('/api/products').send(product)
+        .set('Authorization', `Bearer ${token}`);
+        const message = res.body.message;
+        const data = res.body.data;
+        const statusCode = res.statusCode;
+        if(user.role === "admin"  || user.role === "premium" ) {
+            prodId = res.body.data._id
+            expect(message).toEqual('Success')
+            expect(typeof data).toBe('object')
+            expect(statusCode).toBe(200)
+        } else{
+            expect(message).toEqual('Unauthorized')
+            expect(statusCode).toBe(401)
+        }
+    })
+
+    // Cart Test
+    test('[PUT] /api/carts/:prodId', async() =>{
+        const res = await request(app).put(`/api/carts/${prodId}`)
+        .set('Authorization', `Bearer ${token}`);
+        const message = res.body.message;
+        const data = res.body.data;
+        const statusCode = res.statusCode;
+        expect(message).toEqual('Success')
+        expect(typeof data).toBe('object')
+        expect(statusCode).toBe(200)
+    })
+    test('[PUT] /api/carts/quantity/:prodId', async() =>{
+        const newQuantityExpected = {quantity:5}
+        const res = await request(app).put(`/api/carts/quantity/${prodId}`).send(newQuantityExpected)
+        .set('Authorization', `Bearer ${token}`);
+        const message = res.body.message;
+        const data = res.body.data;
+        const statusCode = res.statusCode;
+        const newQuantityRes = {quantity: res.body.data.products[0].quantity}
+        expect(newQuantityRes).toEqual(newQuantityExpected)
+        expect(message).toEqual('Success')
+        expect(typeof data).toBe('object')
+        expect(statusCode).toBe(200)
+    })
+    test('[DELETE] /api/carts', async() =>{
+        const res = await request(app).delete('/api/carts')
+        .set('Authorization', `Bearer ${token}`);
+        const message = res.body.message;
+        const data = res.body.data;
+        const statusCode = res.statusCode;
+        expect(message).toEqual('Success')
+        expect(data).toEqual(`cart with id ${userCartId} successfully products removed`)
+        expect(statusCode).toBe(200)
+        console.log(res.body)
+    })
 })

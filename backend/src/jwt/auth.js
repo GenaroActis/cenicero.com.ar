@@ -30,6 +30,7 @@ export const checkAuth = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
+    console.log('error', error)
     logger.error(error)
     return res.status(404).json({ msg: 'Unauthorized' })
     };
