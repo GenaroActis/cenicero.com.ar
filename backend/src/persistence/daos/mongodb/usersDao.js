@@ -46,6 +46,14 @@ export default class UsersDaoMongoDB {
             throw new Error(error)
         };
     };
+    async updateLastActivity (userId) {
+        try {
+            await UserModel.findByIdAndUpdate(userId, {lastActivity: new Date()})
+        } catch (error) {
+            logger.error(error)
+            throw new Error(error)
+        }
+    }
     async loginUser (userData) {
         try {
             const email = userData.email
@@ -58,7 +66,7 @@ export default class UsersDaoMongoDB {
                     const passwordValidate = isValidPassword(password, userSearch)
                     if(!passwordValidate) return false
                     else {
-                        await UserModel.findByIdAndUpdate(userSearch._id, {lastActivity: new Date()})
+                        this.updateLastActivity(userSearch._id)
                         return userSearch
                     }
                 }
@@ -133,16 +141,15 @@ export default class UsersDaoMongoDB {
             throw new Error(error)
         }
     };
-    // async deleteInactiveUsers (){
-    //     try {
-    //         const period = 0.01
-    //         const limit = new Date(date.now() - period)
-    //         const res = await UserModel.deleteMany({lastActivity: {$lt: limit}})
-    //         console.log(res)
-    //         return res
-    //     } catch (error) {
-    //         logger.error(error)
-    //         throw new Error(error)
-    //     }
-    // }
+    async deleteInactiveUsers (){
+        try {
+            const period = 0.01
+            const limit = new Date(date.now() - period)
+            const res = await UserModel.deleteMany({lastActivity: {$lt: limit}})
+            return res
+        } catch (error) {
+            logger.error(error)
+            throw new Error(error)
+        }
+    }
 };

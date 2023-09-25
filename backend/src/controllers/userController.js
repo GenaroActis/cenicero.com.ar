@@ -83,9 +83,10 @@ export const recoverPasswordController = async(req, res, next)=>{
 };
 export const logoutUserController = async (req, res, next) =>{
     try {
-        req.session.destroy((err) => {
-            if (err) {
-                console.log(err);
+        await userDao.updateLastActivity(req.user._id)
+        req.session.destroy((error) => {
+            if (error) {
+                logger.error(error)
             } else{
                 res.redirect('/');
             };
@@ -163,12 +164,12 @@ export const convertToUserController = async (req, res, next) =>{
         next(error)
     };
 };
-// const deleteInactiveUsersController = async () =>{
-//     try {
-//         const res = await userDao.deleteInactiveUsers()
-//         console.log(res)
-//     } catch (error) {
-//         logger.error(error)
-//     }
-// }
-// deleteInactiveUsersController()
+export const newDocumentController = async(req, res, next)=>{
+    try {
+        console.log(req.file)
+        httpResponse.Ok(res, 'ok')
+    } catch (error) {
+        logger.error(error)
+        next(error)
+    }
+}

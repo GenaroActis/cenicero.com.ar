@@ -10,7 +10,13 @@ const UserSchema = new mongoose.Schema({
     role: {type:String, default:'user'},
     isGithub: {type:Boolean, default: false},
     cartId: {type: mongoose.Schema.Types.ObjectId, require:true},
-    lastActivity: { type: Date, default: Date.now }
+    lastActivity: { type: Date, default: Date.now },
+    documents: [
+        {
+            name: {type: String},
+            reference:{type: String}
+        }
+    ]
 });
 
 UserSchema.plugin(mongoosePaginate);

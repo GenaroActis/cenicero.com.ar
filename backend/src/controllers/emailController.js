@@ -82,9 +82,41 @@ export const sendRecoverPasswordEmailController = async (req, res, next) =>{
         } else res
         .status(200)
         .header('Authorization', validateToken)
-        .json({msg: 'Login OK', validateToken})
+        .json({msg: 'Recover email OK', validateToken})
     } catch (error) {
         logger.error(error)
         next(error)
+    };
+};
+
+export const sendEmailDeletedAccountController = async (userEmail) =>{
+    try {
+        const transporter = createTransport({
+            service: 'gmail',
+            port: 465,
+            scure: true,
+            auth: {
+                user: ShippingEmail,
+                pass: ShippingPass
+            }
+        }); 
+        // // //
+        const gmailOptions = {
+            from: ShippingEmail,
+            to: userEmail,
+            subject: 'Cuenta eliminada por inactividad!!',
+            html: `
+            <div class='card'>
+                <h1>Si quieres volver a registrarte reingresa</h1>
+                <a href="http://localhost:3000/">Registrarse</a>
+            </div>
+            `
+        };
+        const response = await transporter.sendMail(gmailOptions)
+        if(!response) {
+            logger.error('error sent deleted account email')
+        } else return 'sent'
+    } catch (error) {
+        logger.error(error)
     };
 };

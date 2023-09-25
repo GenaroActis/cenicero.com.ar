@@ -22,8 +22,7 @@ const ProductProvider = ({children}) =>{
                 return data.data
             } else {
                 const res = await response.json();
-                console.log(res)
-                // window.location.href = 'http://localhost:3000/'
+                window.location.href = 'http://localhost:3000/'
                 throw new Error('Error en la solicitud');
             }
         } catch (error) {

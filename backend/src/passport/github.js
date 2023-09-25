@@ -20,6 +20,7 @@ const registerOrLogin = async(accessToken, refreshToken, profile, done) => {
         const email = profile._json.email
         const user = await userDao.getUserByEmail(email);
         if(user) {
+            await userDao.updateLastActivity(user._id)
             const token = generateToken(user)
             return done(null, token)
         }else {
